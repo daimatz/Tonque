@@ -16,5 +16,5 @@ request url = do
   res <- simpleHTTP $ getRequest $ T.unpack url
   str <- getResponseBody res
   let bstr = BSLC.pack str
-      ustr = U.toString $ convert "SJIS" "UTF-8" bstr
-  return $ T.pack str
+      ustr = decodeString $ BSLC.unpack $ convert "SJIS" "UTF-8" bstr
+  return $ T.pack ustr
