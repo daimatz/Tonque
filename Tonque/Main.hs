@@ -9,11 +9,12 @@ import qualified Data.Text.Lazy as TL
 import Control.Applicative ((<$>))
 import Web.Scotty
 
+main :: IO ()
 main = do
   port <- read <$> getEnv "PORT"
-  str <- getListHTML
+  bbss <- allBBSListHTML
   scotty port $ do
     get "/" $ do
-      html $ TL.pack $ T.unpack str
+      html $ TL.pack $ T.unpack bbss
     get "/bbs" $ do
       html "OK"

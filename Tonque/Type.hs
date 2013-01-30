@@ -2,7 +2,9 @@ module Tonque.Type where
 
 import Data.Text (Text)
 
-type Name = Text
+type BBSName = Text
 type URL = Text
-type BBS = (Name, URL)
-type BBSGroup = [BBS]
+type BBS = (BBSName, URL)
+
+type BBSGroupName = Text
+type BBSGroup = (BBSGroupName, [BBS])
