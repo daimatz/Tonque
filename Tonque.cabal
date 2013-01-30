@@ -13,7 +13,18 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 executable Tonque
-  main-is:             src/Main.hs
+  main-is:           Tonque/Main.hs
   -- other-modules:
+  ghc-options:       -Wall
+                     -fno-warn-unused-do-bind
+                     -O2
+  extensions:        OverloadedStrings
   build-depends:       base ==4.5.*
+                     , bytestring
+                     , HTTP
+                     , iconv
+                     , mtl             >= 2.1.2  &&  < 2.2
+                     , parsec
                      , scotty
+                     , text
+                     , utf8-string
