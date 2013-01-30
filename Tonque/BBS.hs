@@ -42,7 +42,8 @@ allBBSListHTML = do
 getAllBBSList :: IO [BBSGroup]
 getAllBBSList = do
     html <- getListHTML
-    case parse allBBSParser html of
+    let html' = T.replace "【"  "/【" html -- FIXME
+    case parse allBBSParser html' of
       Fail _ s t -> error $ show s ++ t
       Partial _  -> error "Unknown"
       Done _ r   -> return r
