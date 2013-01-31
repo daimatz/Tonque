@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Tonque.BBSList
+import Tonque.BoardList
 
 import Control.Monad.IO.Class
 import System.Environment (getEnv)
@@ -15,7 +15,7 @@ main = do
   port <- read <$> getEnv "PORT"
   scotty port $ do
     get "/" $ do
-      bbss <- liftIO allBBSListHTML
-      html $ TL.pack $ T.unpack bbss
-    get "/bbs" $ do
+      boards <- liftIO allBoardListHTML
+      html $ TL.pack $ T.unpack boards
+    get "/board" $ do
       html "OK"

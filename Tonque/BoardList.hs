@@ -1,7 +1,7 @@
-module Tonque.BBSList
-    ( updateBBSList
-    , allBBSList
-    , allBBSListHTML
+module Tonque.BoardList
+    ( updateBoardList
+    , allBoardList
+    , allBoardListHTML
     )
     where
 
@@ -14,60 +14,60 @@ import qualified Data.Text as T
 import Tonque.Request
 import Tonque.Type
 
-bbsListURL :: URL
-bbsListURL = "http://menu.2ch.net/bbstable.html"
+boardListURL :: URL
+boardListURL = "http://menu.2ch.net/bbstable.html"
 
-updateBBSList :: IO [BBSGroup]
-updateBBSList = getAllBBSList
+updateBoardList :: IO [BoardGroup]
+updateBoardList = getBoardList
 
-allBBSList :: IO [BBSGroup]
-allBBSList = getAllBBSList
+allBoardList :: IO [BoardGroup]
+allBoardList = getBoardList
 
-allBBSListHTML :: IO Text
-allBBSListHTML = do
-    all_bbs <- allBBSList
-    return $ "<ul>" <> (T.concat $ map groupHTML all_bbs) <> "</ul>"
+allBoardListHTML :: IO Text
+allBoardListHTML = do
+    allBoard <- allBoardList
+    return $ "<ul>" <> (T.concat $ map groupHTML allBoard) <> "</ul>"
   where
     groupHTML group =  "<li>"
                     <> fst group
                     <> "<ul>\n"
-                    <> (T.concat $ map bbsHTML $ snd group)
+                    <> (T.concat $ map boardHTML $ snd group)
                     <> "</ul></li>\n"
-    bbsHTML   bbs   =  "<li><a href=\""
+    boardHTML board =  "<li><a href=\""
                     <> uri
                     <> "\">"
-                    <> fst bbs
+                    <> fst board
                     <> "</a></li>\n"
       where
-        uri = "/bbs/" <> arg
-        arg = T.drop 7 $ snd bbs -- drop "http://"
+        uri = "/board/" <> arg
+        arg = T.drop 7 $ snd board -- drop "http://"
 
-getAllBBSList :: IO [BBSGroup]
-getAllBBSList = do
+getBoardList :: IO [BoardGroup]
+getBoardList = do
     html <- getListHTML
     let html' = T.replace "【"  "/【" html -- FIXME
-    case parse allBBSParser html' of
+    case parse allBoardParser html' of
       Fail _ s t -> error $ show s ++ t
       Partial _  -> error "Unknown"
       Done _ r   -> return r
 
 getListHTML :: IO Text
-getListHTML = request bbsListURL
+getListHTML = request boardListURL
 
-allBBSParser :: Parser [BBSGroup]
-allBBSParser = do
+allBoardParser :: Parser [BoardGroup]
+allBoardParser = do
     manyTill anyChar (try $ string "【")
     many1 groupParser >>= return
 
-groupParser :: Parser BBSGroup
+groupParser :: Parser BoardGroup
 groupParser = do
     string "<B>"
     name <- (:) <$> anyChar <*> manyTill anyChar (try $ string "</B>】")
-    bbss <- manyTill bbsParser $ try (string "【" <|> string "更新日")
-    return (T.pack name, bbss)
+    boards <- manyTill boardParser $ try (string "【" <|> string "更新日")
+    return (T.pack name, boards)
 
-bbsParser :: Parser BBS
-bbsParser = do
+boardParser :: Parser Board
+boardParser = do
     manyTill anyChar (try $ string "<A HREF=")
     url  <-  (:)
          <$> anyChar
