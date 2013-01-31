@@ -1,7 +1,7 @@
 module Tonque.BoardList
     ( updateBoardList
-    , allBoardList
-    , allBoardListHTML
+    , readBoardList
+    , readBoardListHTML
     )
     where
 
@@ -17,16 +17,14 @@ import Tonque.Type
 boardListURL :: URL
 boardListURL = "http://menu.2ch.net/bbstable.html"
 
-updateBoardList :: IO [BoardGroup]
-updateBoardList = getBoardList
+-- | read board list from DB
+readBoardList :: IO [BoardGroup]
+readBoardList = updateBoardList
 
-allBoardList :: IO [BoardGroup]
-allBoardList = getBoardList
-
-allBoardListHTML :: IO Text
-allBoardListHTML = do
-    allBoard <- allBoardList
-    return $ "<ul>" <> (T.concat $ map groupHTML allBoard) <> "</ul>"
+readBoardListHTML :: IO Text
+readBoardListHTML = do
+    boards <- readBoardList
+    return $ "<ul>" <> (T.concat $ map groupHTML boards) <> "</ul>"
   where
     groupHTML group =  "<li>"
                     <> fst group
@@ -42,8 +40,8 @@ allBoardListHTML = do
         uri = "/board/" <> arg
         arg = T.drop 7 $ snd board -- drop "http://"
 
-getBoardList :: IO [BoardGroup]
-getBoardList = do
+updateBoardList :: IO [BoardGroup]
+updateBoardList = do
     html <- getListHTML
     let html' = T.replace "【"  "/【" html -- FIXME
     case parse allBoardParser html' of

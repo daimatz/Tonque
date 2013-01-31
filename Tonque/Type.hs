@@ -8,3 +8,7 @@ type Board = (BoardName, URL)
 
 type BoardGroupName = Text
 type BoardGroup = (BoardGroupName, [Board])
+
+type ThreadName = Text
+type ThreadNumber = Text
+type Thread = (ThreadName, ThreadNumber)
