@@ -28,4 +28,5 @@ executable Tonque
                      , parsec
                      , scotty
                      , text
+                     , transformers
                      , utf8-string
