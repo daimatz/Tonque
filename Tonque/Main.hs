@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Tonque.BBS
+import Tonque.BBSList
 
 import Control.Monad.IO.Class
 import System.Environment (getEnv)

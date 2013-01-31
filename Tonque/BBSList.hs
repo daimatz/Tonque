@@ -1,4 +1,4 @@
-module Tonque.BBS
+module Tonque.BBSList
     ( updateBBSList
     , allBBSList
     , allBBSListHTML
