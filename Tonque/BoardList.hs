@@ -42,15 +42,12 @@ readBoardListHTML = do
 
 updateBoardList :: IO [BoardGroup]
 updateBoardList = do
-    html <- getListHTML
+    html <- request boardListURL
     let html' = T.replace "【"  "/【" html -- FIXME
     case parse allBoardParser html' of
       Fail _ s t -> error $ show s ++ t
       Partial _  -> error "Unknown"
       Done _ r   -> return r
-
-getListHTML :: IO Text
-getListHTML = request boardListURL
 
 allBoardParser :: Parser [BoardGroup]
 allBoardParser = do
