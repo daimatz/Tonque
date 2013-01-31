@@ -34,10 +34,13 @@ allBBSListHTML = do
                     <> (T.concat $ map bbsHTML $ snd group)
                     <> "</ul></li>\n"
     bbsHTML   bbs   =  "<li><a href=\""
-                    <> snd bbs
+                    <> uri
                     <> "\">"
                     <> fst bbs
                     <> "</a></li>\n"
+      where
+        uri = "/bbs/" <> arg
+        arg = T.drop 7 $ snd bbs -- drop "http://"
 
 getAllBBSList :: IO [BBSGroup]
 getAllBBSList = do
