@@ -11,8 +11,8 @@ import Data.Monoid ((<>))
 import Data.Text (Text)
 import qualified Data.Text as T
 
-import Tonque.Request
 import Tonque.Type
+import Tonque.Util
 
 boardListURL :: URL
 boardListURL = "http://menu.2ch.net/bbstable.html"
@@ -46,7 +46,7 @@ updateBoardList = do
     let html' = T.replace "【"  "/【" html -- FIXME
     case parse allBoardParser html' of
       Fail _ s t -> error $ show s ++ t
-      Partial _  -> error "Partial"
+      Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
 
 allBoardParser :: Parser [BoardGroup]
