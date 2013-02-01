@@ -46,13 +46,13 @@ updateBoardList = do
     let html' = T.replace "【"  "/【" html -- FIXME
     case parse allBoardParser html' of
       Fail _ s t -> error $ show s ++ t
-      Partial _  -> error "Unknown"
+      Partial _  -> error "Partial"
       Done _ r   -> return r
 
 allBoardParser :: Parser [BoardGroup]
 allBoardParser = do
     manyTill anyChar (try $ string "【")
-    many1 groupParser >>= return
+    many1 groupParser
 
 groupParser :: Parser BoardGroup
 groupParser = do

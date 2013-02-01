@@ -4,17 +4,21 @@ import           Codec.Binary.UTF8.String
 import           Codec.Text.IConv
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as BSLC
-import qualified Data.ByteString.Lazy.UTF8 as U
 import           Data.Text (Text)
 import qualified Data.Text as T
 import           Network.HTTP
+import           Network.URI
 
 import Tonque.Type
 
 request :: Tonque.Type.URL -> IO Text
 request url = do
-  res <- simpleHTTP $ getRequest $ T.unpack url
-  str <- getResponseBody res
-  let bstr = BSLC.pack str
-      ustr = decodeString $ BSLC.unpack $ convert "SJIS" "UTF-8" bstr
-  return $ T.pack ustr
+   case uriM of
+       Just uri -> do
+           res <- simpleHTTP $ Request uri GET [] BSL.empty
+           bstr <- getResponseBody res
+           let ustr = decodeString $ BSLC.unpack $ convert "CP932" "UTF-8" bstr
+           return $ T.pack ustr
+       Nothing -> error $ "Invalid URL: " ++ T.unpack url
+  where
+    uriM = parseURI $ T.unpack url

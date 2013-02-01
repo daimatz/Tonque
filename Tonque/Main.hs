@@ -1,6 +1,5 @@
 import Control.Monad.IO.Class
 import System.Environment (getEnv)
-import Data.Monoid (mconcat)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import Control.Applicative ((<$>))

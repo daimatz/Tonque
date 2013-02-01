@@ -5,15 +5,15 @@ module Tonque.Board
     where
 
 import Control.Applicative
-import Control.Monad
 import Data.Char
-import Data.Attoparsec.Text as AT
+import Data.Attoparsec.Text
 import Data.Monoid ((<>))
 import Data.Text (Text)
 import qualified Data.Text as T
 
 import Tonque.Request
 import Tonque.Type
+import Tonque.Util
 
 threadListPath :: Text
 threadListPath = "/subject.txt"
@@ -21,40 +21,41 @@ threadListPath = "/subject.txt"
 getThreadList :: Text -> Text -> IO [Thread]
 getThreadList host path = do
     threads <- request $ "http://" <> host <> "/" <> path <> threadListPath
-    case parse (many threadParser) threads of
+    case parse allThreadParser threads of
       Fail _ s t -> error $ show s ++ t
-      Partial _  -> error "Unknown"
+      Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
 
 getThreadListHTML :: Text -> Text -> IO Text
 getThreadListHTML host path = do
     threads <- getThreadList host path
-    return $ "<ul>" <> (T.concat $ map f threads) <> "</ul>"
+    return $  "<div class=\"threadlist\">\n"
+           <> (T.concat $ map f threads)
+           <> "</div>"
   where
-    f (key, name, cnt)
-      = "<li><a href=\"" <> uri <> ">" <> name <> "</a></li>\n"
+    f (time, name, cnt)
+      =  "<div><ul>\n<li><a href=\""
+      <> uri
+      <> "\">"
+      <> name
+      <> "</a></li>\n<li>"
+      <> textShow cnt
+      <> "</li>\n<li>"
+      <> (timeFormat $ epochToUTC time)
+      <> "</li>\n</ul></div>\n"
       where
-        uri = "/thread/" <> (T.pack $ show key)
+        uri = "/thread/" <> host <> "/" <> path <> "/" <> textShow time
+
+allThreadParser :: Parser [Thread]
+allThreadParser = do
+    many threadParser
 
 threadParser :: Parser Thread
 threadParser = do
-    skipSpace
-    key <- keyParser
+    time <- many digit
     string ".dat<>"
-    name <- AT.takeWhile (not . isEndOfLine)
-    return (key, name, 1)
-
-keyParser :: Parser Integer
-keyParser = inFix digitByte
-
-inFix :: Parser a -> Parser a
-inFix p = try p <|> do anyChar; inFix p
-
-digitByte :: Parser Integer
-digitByte = do
-    ns <- many1 $ do c <- digit ; return $ digitToInt c
-    when (head ns == 0) $ error "Illegal Key"
-    return $ nsToInteger ns
-
-nsToInteger :: [Int] -> Integer
-nsToInteger = fromIntegral . foldl (\x y -> x * 10 + y) 0
+    rest <- takeTill (flip elem "\r\n")
+    let (name, numStr) = T.breakOnEnd " " rest
+        num = T.init $ T.tail numStr
+    many (satisfy $ not . isDigit)
+    return (read time, T.strip name, read $ T.unpack num)
