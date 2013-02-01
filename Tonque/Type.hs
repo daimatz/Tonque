@@ -10,5 +10,6 @@ type BoardGroupName = Text
 type BoardGroup = (BoardGroupName, [Board])
 
 type ThreadName = Text
-type ThreadNumber = Text
-type Thread = (ThreadName, ThreadNumber)
+type ThreadKey = Integer -- UNIX Time (sec) of thread-built date
+type ThreadResCount = Int
+type Thread = (ThreadKey, ThreadName, ThreadResCount)
