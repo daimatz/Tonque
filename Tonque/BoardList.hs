@@ -1,14 +1,11 @@
 module Tonque.BoardList
     ( updateBoardList
     , readBoardList
-    , readBoardListHTML
     )
     where
 
 import Control.Applicative
 import Data.Attoparsec.Text
-import Data.Monoid ((<>))
-import Data.Text (Text)
 import qualified Data.Text as T
 
 import Tonque.Type
@@ -20,25 +17,6 @@ boardListURL = "http://menu.2ch.net/bbstable.html"
 -- | read board list from DB
 readBoardList :: IO [BoardGroup]
 readBoardList = updateBoardList
-
-readBoardListHTML :: IO Text
-readBoardListHTML = do
-    boards <- readBoardList
-    return $ "<ul>" <> (T.concat $ map groupHTML boards) <> "</ul>"
-  where
-    groupHTML group =  "<li>"
-                    <> fst group
-                    <> "<ul>\n"
-                    <> (T.concat $ map boardHTML $ snd group)
-                    <> "</ul></li>\n"
-    boardHTML board =  "<li><a href=\""
-                    <> uri
-                    <> "\">"
-                    <> fst board
-                    <> "</a></li>\n"
-      where
-        uri = "/board/" <> arg
-        arg = T.drop 7 $ snd board -- drop "http://"
 
 updateBoardList :: IO [BoardGroup]
 updateBoardList = do

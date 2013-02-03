@@ -1,6 +1,5 @@
 module Tonque.Board
     ( getThreadList
-    , getThreadListHTML
     )
     where
 
@@ -24,26 +23,6 @@ getThreadList host path = do
       Fail _ s t -> error $ show s ++ t
       Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
-
-getThreadListHTML :: Text -> Text -> IO Text
-getThreadListHTML host path = do
-    threads <- getThreadList host path
-    return $  "<div class=\"threadlist\">\n"
-           <> (T.concat $ map f threads)
-           <> "</div>"
-  where
-    f (time, name, cnt)
-      =  "<div><ul>\n<li><a href=\""
-      <> uri
-      <> "\">"
-      <> name
-      <> "</a></li>\n<li>"
-      <> textShow cnt
-      <> "</li>\n<li>"
-      <> (timeFormat $ epochToUTC time)
-      <> "</li>\n</ul></div>\n"
-      where
-        uri = "/thread/" <> host <> "/" <> path <> "/" <> textShow time
 
 allThreadParser :: Parser [Thread]
 allThreadParser = do
