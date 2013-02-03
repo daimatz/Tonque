@@ -17,5 +17,5 @@ main = do
     get "/board/:host/:path" $ do
       host <- T.pack <$> param "host"
       path <- T.pack <$> param "path"
-      threads <- liftIO $ threadListHTML host path
+      threads <- liftIO $ boardHTML host path
       html $ TL.fromStrict threads

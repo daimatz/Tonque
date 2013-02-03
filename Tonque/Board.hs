@@ -1,5 +1,5 @@
 module Tonque.Board
-    ( getThreadList
+    ( getBoard
     )
     where
 
@@ -13,19 +13,19 @@ import qualified Data.Text as T
 import Tonque.Type
 import Tonque.Util
 
-threadListPath :: Text
-threadListPath = "/subject.txt"
+boardPath :: Text
+boardPath = "/subject.txt"
 
-getThreadList :: Text -> Text -> IO [Thread]
-getThreadList host path = do
-    threads <- request $ "http://" <> host <> "/" <> path <> threadListPath
-    case parse allThreadParser threads of
+getBoard :: Text -> Text -> IO [Thread]
+getBoard host path = do
+    board <- request $ "http://" <> host <> "/" <> path <> boardPath
+    case parse boardParser board of
       Fail _ s t -> error $ show s ++ t
       Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
 
-allThreadParser :: Parser [Thread]
-allThreadParser = do
+boardParser :: Parser [Thread]
+boardParser = do
     many threadParser
 
 threadParser :: Parser Thread

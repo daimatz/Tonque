@@ -1,5 +1,5 @@
 module Tonque.HTML
-    ( threadListHTML
+    ( boardHTML
     , boardListHTML
     )
     where
@@ -12,33 +12,11 @@ import Tonque.Board
 import Tonque.BoardList
 import Tonque.Util
 
-boardListHTML :: IO Text
-boardListHTML = do
-    boards <- readBoardList
-    return $  "<ul class=\"boardlist\">"
-           <> (T.concat $ map groupHTML boards)
-           <> "</ul>"
-  where
-    groupHTML group =  "<li>"
-                    <> fst group
-                    <> "<ul>\n"
-                    <> (T.concat $ map boardHTML $ snd group)
-                    <> "</ul></li>\n"
-    boardHTML board =  "<li><a href=\""
-                    <> uri
-                    <> "\">"
-                    <> fst board
-                    <> "</a></li>\n"
-      where
-        uri = "/board/" <> arg
-        arg = T.drop 7 $ snd board -- drop "http://"
-
-
-threadListHTML :: Text -> Text -> IO Text
-threadListHTML host path = do
-    threads <- getThreadList host path
-    return $  "<ul class=\"threadlist\">\n"
-           <> (T.concat $ map f threads)
+boardHTML :: Text -> Text -> IO Text
+boardHTML host path = do
+    board <- getBoard host path
+    return $  "<ul class=\"board\">\n"
+           <> (T.concat $ map f board)
            <> "</ul>"
   where
     f (time, name, cnt)
@@ -54,4 +32,22 @@ threadListHTML host path = do
       where
         uri = "/thread/" <> host <> "/" <> path <> "/" <> textShow time
 
-
+boardListHTML :: IO Text
+boardListHTML = do
+    boards <- readBoardList
+    return $  "<ul class=\"boardlist\">"
+           <> (T.concat $ map groupHTML boards)
+           <> "</ul>"
+  where
+    groupHTML (name, boards)
+        =  "<li>"
+        <> name
+        <> "<ul>\n"
+        <> (T.concat $ map boardLinkHTML boards)
+        <> "</ul></li>\n"
+    boardLinkHTML (name, url)
+        =  "<li><a href=\""
+        <> "/board/" <> T.drop 7 url -- drop "http://"
+        <> "\">"
+        <> name
+        <> "</a></li>\n"
