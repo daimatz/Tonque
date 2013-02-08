@@ -1,6 +1,6 @@
 module Tonque.Type where
 
-import Data.Text (Text)
+import Data.Text.Lazy (Text)
 import Foreign.C.Types (CTime)
 
 type EpochTime = CTime

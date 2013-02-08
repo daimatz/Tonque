@@ -1,7 +1,5 @@
-import Control.Monad.IO.Class
+import Control.Monad.IO.Class (liftIO)
 import System.Environment (getEnv)
-import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
 import Control.Applicative ((<$>))
 import Web.Scotty
 
@@ -13,9 +11,9 @@ main = do
   scotty port $ do
     get "/" $ do
       boards <- liftIO boardListHTML
-      html $ TL.fromStrict boards
+      html boards
     get "/board/:host/:path" $ do
-      host <- T.pack <$> param "host"
-      path <- T.pack <$> param "path"
+      host <- param "host"
+      path <- param "path"
       threads <- liftIO $ boardHTML host path
-      html $ TL.fromStrict threads
+      html threads

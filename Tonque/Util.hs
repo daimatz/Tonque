@@ -1,22 +1,23 @@
 module Tonque.Util where
 
-import           Codec.Binary.UTF8.String
 import           Codec.Text.IConv (convertFuzzy, Fuzzy(..))
+import           Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as BSL
-import qualified Data.ByteString.Lazy.Char8 as BSLC
 import           Data.Convertible (safeConvert)
-import           Data.Text (Text)
-import qualified Data.Text as T
+import           Data.Monoid ((<>))
+import           Data.Text.Lazy (Text)
+import qualified Data.Text.Lazy as TL
+import           Data.Text.Lazy.Encoding (decodeUtf8, encodeUtf8)
 import           Data.Time (UTCTime)
 import           Data.Time.Format (formatTime)
-import           Network.HTTP
+import qualified Network.HTTP as H
 import           Network.URI (parseURI)
 import           System.Locale (defaultTimeLocale)
 
 import           Tonque.Type
 
 textShow :: Show a => a -> Text
-textShow = T.pack . show
+textShow = TL.pack . show
 
 epochToUTC :: EpochTime -> UTCTime
 epochToUTC t = case safeConvert t of
@@ -24,26 +25,18 @@ epochToUTC t = case safeConvert t of
     Right res -> res
 
 timeFormat :: UTCTime -> Text
-timeFormat = T.pack . formatTime defaultTimeLocale "%F %T"
+timeFormat = TL.pack . formatTime defaultTimeLocale "%F %T"
 
 request :: URL -> IO Text
 request url = do
-   case uriM of
-       Just uri -> do
-           res <- simpleHTTP $ Request uri GET [] BSL.empty
-           getResponseBody res >>= return . toUTF8
-       Nothing -> error $ "Invalid URL: " ++ T.unpack url
+    flip (maybe $ error $ TL.unpack $ "Invalid URL: " <> url) uriM $ \uri -> do
+         res <- H.simpleHTTP $ H.Request uri H.GET [] BSL.empty
+         H.getResponseBody res >>= return . toUTF8
   where
-    uriM = parseURI $ T.unpack url
+    uriM = parseURI $ TL.unpack url
 
-toUTF8 :: BSL.ByteString -> Text
-toUTF8 = T.pack
-       . decodeString
-       . BSLC.unpack
-       . convertFuzzy Discard "SJIS" "UTF-8"
+toUTF8 :: ByteString -> Text
+toUTF8 = decodeUtf8 . convertFuzzy Discard "SJIS" "UTF-8"
 
-toSJIS :: Text -> BSL.ByteString
-toSJIS = convertFuzzy Discard "UTF-8" "SJIS"
-       . BSLC.pack
-       . encodeString
-       . T.unpack
+toSJIS :: Text -> ByteString
+toSJIS = convertFuzzy Discard "UTF-8" "SJIS" . encodeUtf8

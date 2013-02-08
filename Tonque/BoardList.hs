@@ -4,9 +4,9 @@ module Tonque.BoardList
     )
     where
 
-import Control.Applicative
-import Data.Attoparsec.Text
-import qualified Data.Text as T
+import Control.Applicative ((<$>), (<*>), (<|>))
+import Data.Attoparsec.Text.Lazy
+import qualified Data.Text.Lazy as TL
 
 import Tonque.Type
 import Tonque.Util
@@ -21,10 +21,9 @@ readBoardList = updateBoardList
 updateBoardList :: IO [BoardGroup]
 updateBoardList = do
     html <- request boardListURL
-    let html' = T.replace "【"  "/【" html -- FIXME
+    let html' = TL.replace "【"  "/【" html -- FIXME
     case parse allBoardParser html' of
       Fail _ s t -> error $ show s ++ t
-      Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
 
 allBoardParser :: Parser [BoardGroup]
@@ -37,7 +36,7 @@ groupParser = do
     string "<B>"
     name <- (:) <$> anyChar <*> manyTill anyChar (try $ string "</B>】")
     boards <- manyTill boardParser $ try (string "【" <|> string "更新日")
-    return (T.pack name, boards)
+    return (TL.pack name, boards)
 
 boardParser :: Parser Board
 boardParser = do
@@ -49,4 +48,4 @@ boardParser = do
          <$> anyChar
          <*> manyTill anyChar (try $ string "</A>")
     manyTill anyChar $ char '/'
-    return (T.pack name, T.pack $ fst $ break (== ' ') url)
+    return (TL.pack name, TL.pack $ fst $ break (== ' ') url)

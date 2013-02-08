@@ -3,12 +3,12 @@ module Tonque.Board
     )
     where
 
-import Control.Applicative
-import Data.Char
-import Data.Attoparsec.Text
+import Control.Applicative (many)
+import Data.Attoparsec.Text.Lazy
+import Data.Char (isDigit)
 import Data.Monoid ((<>))
-import Data.Text (Text)
-import qualified Data.Text as T
+import Data.Text.Lazy (Text)
+import qualified Data.Text.Lazy as TL
 
 import Tonque.Type
 import Tonque.Util
@@ -21,7 +21,6 @@ getBoard host path = do
     board <- request $ "http://" <> host <> "/" <> path <> boardPath
     case parse boardParser board of
       Fail _ s t -> error $ show s ++ t
-      Partial f  -> let Done _ r' = f "" in return r'
       Done _ r   -> return r
 
 boardParser :: Parser [Thread]
@@ -33,7 +32,7 @@ threadParser = do
     time <- many digit
     string ".dat<>"
     rest <- takeTill (flip elem "\r\n")
-    let (name, numStr) = T.breakOnEnd " " rest
-        num = T.init $ T.tail numStr
+    let (name, numStr) = TL.breakOnEnd " " $ TL.fromStrict rest
+        num = TL.init $ TL.tail numStr
     many (satisfy $ not . isDigit)
-    return (read time, T.strip name, read $ T.unpack num)
+    return (read time, TL.strip name, read $ TL.unpack num)
