@@ -10,10 +10,11 @@ main = do
   port <- read <$> getEnv "PORT"
   scotty port $ do
     get "/" $ do
-      boards <- liftIO boardListHTML
-      html boards
-    get "/board/:host/:path" $ do
-      host <- param "host"
-      path <- param "path"
-      threads <- liftIO $ boardHTML host path
-      html threads
+      boardList <- liftIO boardListHTML
+      html boardList
+    get "/board/:host/:path" $ \ host path -> do
+      board <- liftIO $ boardHTML host path
+      html board
+    get "/thread/:host/:path/:key" $ \ host path key -> do
+      thread <- liftIO $ threadHTML host path key
+      html thread
