@@ -59,7 +59,7 @@ boardHTML host path threads
         = MuVariable $ "/thread/" <> host <> "/" <> path <> "/" <> textShow time
     threadContext (Thread _ name _) "threadName"
         = MuVariable name
-    threadContext (Thread _ _ resCount) "threadResCound"
+    threadContext (Thread _ _ resCount) "threadResCount"
         = MuVariable $ textShow resCount
     threadContext (Thread time _ _) "threadCreated"
         = MuVariable $ timeFormat $ epochToUTC time
