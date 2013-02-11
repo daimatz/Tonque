@@ -26,7 +26,6 @@ executable Tonque
                      , convertible
                      , containers
                      , hastache
-                     , heroku
                      , HTTP
                      , iconv
                      , mtl                   >= 2.1.2  &&  < 2.2
@@ -35,7 +34,6 @@ executable Tonque
                      , parsec
                      , persistent            >= 1.0    &&  < 1.1
                      , persistent-template
-                     , persistent-postgresql
                      , persistent-sqlite
                      , scotty                >= 0.4.6
                      , text

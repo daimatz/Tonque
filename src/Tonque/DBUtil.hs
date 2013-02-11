@@ -9,7 +9,7 @@ import           Database.Persist.GenericSql
 
 import           Tonque.Model
 
--- #define SQLite
+#define SQLite
 
 #ifdef SQLite
 
