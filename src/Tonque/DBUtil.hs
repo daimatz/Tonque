@@ -4,6 +4,7 @@ module Tonque.DBUtil where
 
 import           Control.Applicative         ((<$>))
 import           Control.Monad               (forM)
+import           Data.Text.Lazy              (Text)
 import           Database.Persist
 import           Database.Persist.GenericSql
 
@@ -45,4 +46,20 @@ updateBoardGroupCaches :: [BoardGroupCache] -> IO ()
 updateBoardGroupCaches boards = do
     runSql $ deleteWhere ([] :: [Filter BoardGroupCache])
     _ <- runSql $ forM boards $ \board -> insert board
+    return ()
+
+searchFavThread :: Text -> IO Bool
+searchFavThread identifier = do
+    lst <- map entityVal <$>
+        (runSql $ selectList [FavThreadIdentifier ==. identifier] [])
+    return $ lst /= []
+
+addFavThread :: FavThread -> IO ()
+addFavThread thread = do
+    runSql $ insert thread
+    return ()
+
+removeFavThread :: Text -> IO ()
+removeFavThread identifier = do
+    runSql $ deleteWhere [FavThreadIdentifier ==. identifier]
     return ()

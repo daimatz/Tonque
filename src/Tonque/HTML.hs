@@ -35,12 +35,16 @@ nullContext = mkStrContext $ const $ MuVariable ("" :: T.Text)
 errorRef :: forall m . MuType m
 errorRef = MuVariable ("error" :: T.Text)
 
-threadHTML :: ResList -> ActionM Text
-threadHTML (ResList ids resses)
+threadHTML :: Bool -> ResList -> ActionM Text
+threadHTML faved (ResList ids resses)
     = liftIO $ mustache "view/Thread.mustache" (mkStrContext context)
   where
-    context "res" = MuList $ map (mkStrContext . resContext) resses
-    context _     = errorRef
+    context "res"     = MuList $ map (mkStrContext . resContext) resses
+    context "favUrl"  = MuVariable $
+        if faved then "unfav" else "fav/" <> textShow (length resses)
+    context "favText" = MuVariable $
+        if faved then "unfav" else ("fav" :: Text)
+    context _         = errorRef
     resContext res "resNumber"  = MuVariable $ textShow (resNumber res)
     resContext res "resName"    = MuVariable $ resName res
     resContext res "resDate"    = MuVariable $ resDate res
@@ -49,14 +53,14 @@ threadHTML (ResList ids resses)
     resContext res "resBody"    = MuVariable $ resBody res
     resContext _   _            = errorRef
 
-boardHTML :: Text -> Text -> [Thread] -> ActionM Text
-boardHTML host path threads
+boardHTML :: [Thread] -> ActionM Text
+boardHTML threads
     = liftIO $ mustache "view/Board.mustache" (mkStrContext context)
   where
     context "thread" = MuList $ map (mkStrContext . threadContext) threads
     context _         = errorRef
-    threadContext (Thread time _ _) "threadURL"
-        = MuVariable $ "/thread/" <> host <> "/" <> path <> "/" <> textShow time
+    threadContext (Thread time _ _) "threadUrl"
+        = MuVariable $ textShow time <> "/index"
     threadContext (Thread _ name _) "threadName"
         = MuVariable name
     threadContext (Thread _ _ resCount) "threadResCount"
@@ -81,7 +85,7 @@ boardGroupsHTML groups
     boardContext (Board name _) "boardName"
         = MuVariable name
     boardContext (Board _ url) "boardURL"
-        = MuVariable $ "/board/" <> TL.drop 7 url
+        = MuVariable $ "/board/" <> TL.drop (TL.length "http://") url <> "index"
     boardContext _     _
         = errorRef
 
