@@ -1,4 +1,4 @@
-module Tonque.BoardList
+module Tonque.BoardGroups
     ( updateBoardGroups
     , readBoardGroups
     )
@@ -13,16 +13,16 @@ import           Tonque.DBUtil
 import           Tonque.Type
 import           Tonque.Util
 
-boardListURL :: Text
-boardListURL = "http://menu.2ch.net/bbstable.html"
+boardGroupsUrl :: Text
+boardGroupsUrl = "http://menu.2ch.net/bbstable.html"
 
--- | read board list from DB
+-- | read board groups from DB
 readBoardGroups :: IO [BoardGroup]
 readBoardGroups = return . fromCache =<< readBoardGroupCaches
 
 updateBoardGroups :: IO ()
 updateBoardGroups = do
-    html <- request boardListURL
+    html <- request boardGroupsUrl
     let html'  = TL.replace "【"  "/【" html -- FIXME
         groups = case parse allBoardParser html' of
                    Fail _ s t -> error $ show s ++ t

@@ -5,7 +5,7 @@ import           System.Environment          (getEnv)
 import           Web.Scotty                  hiding (body)
 
 import           Tonque.Board
-import           Tonque.BoardList
+import           Tonque.BoardGroups
 import           Tonque.DBUtil
 import           Tonque.HTML
 import           Tonque.Model
@@ -18,8 +18,8 @@ main = do
     scotty port $ do
         get "/" $ do
             groups <- liftIO readBoardGroups
-            body =<< boardListHTML groups
-        get "/updateBoardList" $ do
+            body =<< boardGroupsHTML groups
+        get "/updateBoardGroups" $ do
             liftIO updateBoardGroups
             redirect "/"
         get "/board/:host/:path" $ \ host path -> do

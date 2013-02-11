@@ -2,7 +2,7 @@
 
 module Tonque.HTML
     ( threadHTML
-    , boardListHTML
+    , boardGroupsHTML
     , boardHTML
     , body
     ) where
@@ -66,9 +66,9 @@ boardHTML host path threads
     threadContext _ _
         = errorRef
 
-boardListHTML :: [BoardGroup] -> ActionM Text
-boardListHTML groups
-    = liftIO $ mustache "view/BoardList.mustache" (mkStrContext context)
+boardGroupsHTML :: [BoardGroup] -> ActionM Text
+boardGroupsHTML groups
+    = liftIO $ mustache "view/BoardGroups.mustache" (mkStrContext context)
   where
     context "boardGroup" = MuList $ map (mkStrContext . groupContext) groups
     context _            = errorRef
