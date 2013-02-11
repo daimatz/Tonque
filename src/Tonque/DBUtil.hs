@@ -38,7 +38,8 @@ runSql query = do
 #endif
 
 readBoardGroupCaches :: IO [BoardGroupCache]
-readBoardGroupCaches = map entityVal <$> (runSql $ selectList [] [])
+readBoardGroupCaches
+    = map entityVal <$> (runSql $ selectList [] [Asc BoardGroupCacheId])
 
 updateBoardGroupCaches :: [BoardGroupCache] -> IO ()
 updateBoardGroupCaches boards = do
