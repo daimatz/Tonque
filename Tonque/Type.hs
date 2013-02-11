@@ -1,7 +1,7 @@
 module Tonque.Type where
 
 import Data.Text.Lazy (Text)
-import qualified Data.Map as Map
+import Data.Map (Map)
 import Foreign.C.Types (CTime)
 
 type EpochTime = CTime
@@ -26,5 +26,5 @@ data Res = Res
   , resTitle  :: Maybe Text
   , resBody   :: Text
   }
-type ResIds = Map.Map Text Int
+type ResIds = Map Text Int
 type ResList = (ResIds, [Res])

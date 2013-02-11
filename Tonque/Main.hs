@@ -1,20 +1,23 @@
 import Control.Monad.IO.Class (liftIO)
 import System.Environment (getEnv)
 import Control.Applicative ((<$>))
-import Web.Scotty
+import Web.Scotty hiding (body)
 
-import Tonque.HTML
+import Tonque.Mustache
+import Tonque.Board
+import Tonque.BoardList
+import Tonque.Thread
 
 main :: IO ()
 main = do
   port <- read <$> getEnv "PORT"
   scotty port $ do
     get "/" $ do
-      boardList <- liftIO boardListHTML
-      html boardList
+      groups <- liftIO readBoardList
+      body =<< boardListHTML groups
     get "/board/:host/:path" $ \ host path -> do
-      board <- liftIO $ boardHTML host path
-      html board
+      threads <- liftIO $ getBoard host path
+      body =<< boardHTML host path threads
     get "/thread/:host/:path/:key" $ \ host path key -> do
-      thread <- liftIO $ threadHTML host path key
-      html thread
+      (ids, resses) <- liftIO $ getThread host path key
+      body =<< threadHTML ids resses

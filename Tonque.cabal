@@ -24,6 +24,7 @@ executable Tonque
                      , bytestring
                      , convertible
                      , containers
+                     , hastache
                      , HTTP
                      , iconv
                      , mtl             >= 2.1.2  &&  < 2.2
