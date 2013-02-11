@@ -27,7 +27,7 @@ epochToUTC t = case safeConvert t of
 timeFormat :: UTCTime -> Text
 timeFormat = TL.pack . formatTime defaultTimeLocale "%F %T"
 
-request :: URL -> IO Text
+request :: Text -> IO Text
 request url = do
     flip (maybe $ error $ TL.unpack $ "Invalid URL: " <> url) uriM $ \uri -> do
          res <- H.simpleHTTP $ H.Request uri H.GET [] BSL.empty

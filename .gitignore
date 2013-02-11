@@ -31,4 +31,6 @@ Icon
 !.gitignore
 *~
 
+### SQLite3
 
+*.sqlite3

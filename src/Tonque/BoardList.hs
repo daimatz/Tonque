@@ -1,30 +1,33 @@
 module Tonque.BoardList
-    ( updateBoardList
-    , readBoardList
+    ( updateBoardGroups
+    , readBoardGroups
     )
     where
 
 import           Control.Applicative       ((<$>), (<*>), (<|>))
 import           Data.Attoparsec.Text.Lazy
+import           Data.Text.Lazy            (Text)
 import qualified Data.Text.Lazy            as TL
 
+import           Tonque.DBUtil
 import           Tonque.Type
 import           Tonque.Util
 
-boardListURL :: URL
+boardListURL :: Text
 boardListURL = "http://menu.2ch.net/bbstable.html"
 
 -- | read board list from DB
-readBoardList :: IO [BoardGroup]
-readBoardList = updateBoardList
+readBoardGroups :: IO [BoardGroup]
+readBoardGroups = return . fromCache =<< readBoardGroupCaches
 
-updateBoardList :: IO [BoardGroup]
-updateBoardList = do
+updateBoardGroups :: IO ()
+updateBoardGroups = do
     html <- request boardListURL
-    let html' = TL.replace "【"  "/【" html -- FIXME
-    case parse allBoardParser html' of
-      Fail _ s t -> error $ show s ++ t
-      Done _ r   -> return r
+    let html'  = TL.replace "【"  "/【" html -- FIXME
+        groups = case parse allBoardParser html' of
+                   Fail _ s t -> error $ show s ++ t
+                   Done _ r   -> r
+    updateBoardGroupCaches $ toCache groups
 
 allBoardParser :: Parser [BoardGroup]
 allBoardParser = do

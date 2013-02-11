@@ -26,13 +26,18 @@ executable Tonque
                      , convertible
                      , containers
                      , hastache
+                     , heroku
                      , HTTP
                      , iconv
-                     , mtl             >= 2.1.2  &&  < 2.2
+                     , mtl                   >= 2.1.2  &&  < 2.2
                      , network
                      , old-locale
                      , parsec
-                     , scotty          >= 0.4.6
+                     , persistent            >= 1.0    &&  < 1.1
+                     , persistent-template
+                     , persistent-postgresql
+                     , persistent-sqlite
+                     , scotty                >= 0.4.6
                      , text
                      , time
                      , transformers
