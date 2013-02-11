@@ -3,9 +3,9 @@ import System.Environment (getEnv)
 import Control.Applicative ((<$>))
 import Web.Scotty hiding (body)
 
-import Tonque.Mustache
 import Tonque.Board
 import Tonque.BoardList
+import Tonque.HTML
 import Tonque.Thread
 
 main :: IO ()

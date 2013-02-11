@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Tonque.Mustache
+module Tonque.HTML
     ( threadHTML
     , boardListHTML
     , boardHTML
