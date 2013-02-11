@@ -1,12 +1,12 @@
-import Control.Monad.IO.Class (liftIO)
-import System.Environment (getEnv)
-import Control.Applicative ((<$>))
-import Web.Scotty hiding (body)
+import           Control.Applicative    ((<$>))
+import           Control.Monad.IO.Class (liftIO)
+import           System.Environment     (getEnv)
+import           Web.Scotty             hiding (body)
 
-import Tonque.Board
-import Tonque.BoardList
-import Tonque.HTML
-import Tonque.Thread
+import           Tonque.Board
+import           Tonque.BoardList
+import           Tonque.HTML
+import           Tonque.Thread
 
 main :: IO ()
 main = do

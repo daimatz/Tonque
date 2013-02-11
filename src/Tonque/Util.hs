@@ -1,18 +1,18 @@
 module Tonque.Util where
 
-import           Codec.Text.IConv (convertFuzzy, Fuzzy(..))
-import           Data.ByteString.Lazy (ByteString)
-import qualified Data.ByteString.Lazy as BSL
-import           Data.Convertible (safeConvert)
-import           Data.Monoid ((<>))
-import           Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as TL
+import           Codec.Text.IConv        (Fuzzy (..), convertFuzzy)
+import           Data.ByteString.Lazy    (ByteString)
+import qualified Data.ByteString.Lazy    as BSL
+import           Data.Convertible        (safeConvert)
+import           Data.Monoid             ((<>))
+import           Data.Text.Lazy          (Text)
+import qualified Data.Text.Lazy          as TL
 import           Data.Text.Lazy.Encoding (decodeUtf8, encodeUtf8)
-import           Data.Time (UTCTime)
-import           Data.Time.Format (formatTime)
-import qualified Network.HTTP as H
-import           Network.URI (parseURI)
-import           System.Locale (defaultTimeLocale)
+import           Data.Time               (UTCTime)
+import           Data.Time.Format        (formatTime)
+import qualified Network.HTTP            as H
+import           Network.URI             (parseURI)
+import           System.Locale           (defaultTimeLocale)
 
 import           Tonque.Type
 

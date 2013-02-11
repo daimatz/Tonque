@@ -4,12 +4,12 @@ module Tonque.BoardList
     )
     where
 
-import Control.Applicative ((<$>), (<*>), (<|>))
-import Data.Attoparsec.Text.Lazy
-import qualified Data.Text.Lazy as TL
+import           Control.Applicative       ((<$>), (<*>), (<|>))
+import           Data.Attoparsec.Text.Lazy
+import qualified Data.Text.Lazy            as TL
 
-import Tonque.Type
-import Tonque.Util
+import           Tonque.Type
+import           Tonque.Util
 
 boardListURL :: URL
 boardListURL = "http://menu.2ch.net/bbstable.html"

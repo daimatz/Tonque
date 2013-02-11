@@ -3,15 +3,15 @@ module Tonque.Board
     )
     where
 
-import Control.Applicative (many)
-import Data.Attoparsec.Text.Lazy
-import Data.Char (isDigit)
-import Data.Monoid ((<>))
-import Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as TL
+import           Control.Applicative       (many)
+import           Data.Attoparsec.Text.Lazy
+import           Data.Char                 (isDigit)
+import           Data.Monoid               ((<>))
+import           Data.Text.Lazy            (Text)
+import qualified Data.Text.Lazy            as TL
 
-import Tonque.Type
-import Tonque.Util
+import           Tonque.Type
+import           Tonque.Util
 
 boardPath :: Text
 boardPath = "/subject.txt"

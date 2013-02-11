@@ -3,16 +3,16 @@ module Tonque.Thread
     )
     where
 
-import Control.Monad (guard)
-import Data.List (elemIndices)
-import Data.Map (Map)
-import qualified Data.Map as Map
-import Data.Monoid ((<>))
-import Data.Text.Lazy (Text)
+import           Control.Monad  (guard)
+import           Data.List      (elemIndices)
+import           Data.Map       (Map)
+import qualified Data.Map       as Map
+import           Data.Monoid    ((<>))
+import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 
-import Tonque.Type hiding (resIds)
-import Tonque.Util
+import           Tonque.Type    hiding (resIds)
+import           Tonque.Util
 
 getThread :: Text -> Text -> Text -> IO ResList
 getThread host path key = do
