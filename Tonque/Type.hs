@@ -5,26 +5,40 @@ import Data.Map (Map)
 import Foreign.C.Types (CTime)
 
 type EpochTime = CTime
-
-type BoardName = Text
 type URL = Text
-type Board = (BoardName, URL)
 
-type BoardGroupName = Text
-type BoardGroup = (BoardGroupName, [Board])
+data Board = Board
+    { boardName :: Text
+    , boardURL  :: Text
+    }
+  deriving (Show, Read, Eq, Ord)
 
-type ThreadName = Text
-type ThreadResCount = Int
-type Thread = (EpochTime, ThreadName, ThreadResCount)
+data BoardGroup = BoardGroup
+    { boardGroupName   :: Text
+    , boardGroupBoards :: [Board]
+    }
+  deriving (Show, Read, Eq, Ord)
+
+data Thread = Thread
+    { threadTime     :: EpochTime
+    , threadName     :: Text
+    , threadResCount :: Int
+    }
+  deriving (Show, Read, Eq, Ord)
 
 data Res = Res
-  { resNumber :: Int
-  , resName   :: Text
-  , resMail   :: Text
-  , resDate   :: Text
-  , resId     :: Text
-  , resTitle  :: Maybe Text
-  , resBody   :: Text
-  }
-type ResIds = Map Text Int
-type ResList = (ResIds, [Res])
+    { resNumber :: Int
+    , resName   :: Text
+    , resMail   :: Text
+    , resDate   :: Text
+    , resId     :: Text
+    , resTitle  :: Maybe Text
+    , resBody   :: Text
+    }
+  deriving (Show, Read, Eq, Ord)
+
+data ResList = ResList
+    { resIds        :: Map Text Int
+    , resListResses :: [Res]
+    }
+  deriving (Show, Read, Eq, Ord)

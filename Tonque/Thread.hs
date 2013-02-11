@@ -5,12 +5,13 @@ module Tonque.Thread
 
 import Control.Monad (guard)
 import Data.List (elemIndices)
+import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Monoid ((<>))
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 
-import Tonque.Type
+import Tonque.Type hiding (resIds)
 import Tonque.Util
 
 getThread :: Text -> Text -> Text -> IO ResList
@@ -19,7 +20,7 @@ getThread host path key = do
                       <> key <> ".dat"
     let resses = map parseLine $ zip [1..] $ TL.lines thread
         ids = resIds resses
-    return (ids, resses)
+    return $ ResList ids resses
 
 -- | parse line and return Res.
 --  when failed to parse, then returns Error value.
@@ -53,7 +54,7 @@ parseLine (n, line)
 --            , Res 3 "" "" "" "b" ""
 --            ]
 -- Map.fromList [("a", 2), ("b", 1)]
-resIds :: [Res] -> Map.Map Text Int
+resIds :: [Res] -> Map Text Int
 resIds ressess
     = let ids = [ resId v | v <- ressess ]
           indices = [ (n, elemIndices n ids) | n <- ids ]

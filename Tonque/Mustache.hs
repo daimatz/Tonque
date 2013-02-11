@@ -8,7 +8,7 @@ module Tonque.Mustache
     ) where
 
 import           Control.Monad.IO.Class  (MonadIO, liftIO)
-import           Data.Map                (Map, (!))
+import           Data.Map                ((!))
 import           Data.Monoid             ((<>))
 import qualified Data.Text               as T
 import           Data.Text.Lazy          (Text)
@@ -35,8 +35,8 @@ nullContext = mkStrContext $ const $ MuVariable ("" :: T.Text)
 errorRef :: forall m . MuType m
 errorRef = MuVariable ("error" :: T.Text)
 
-threadHTML :: Map Text Int -> [Res] -> ActionM Text
-threadHTML ids resses
+threadHTML :: ResList -> ActionM Text
+threadHTML (ResList ids resses)
     = liftIO $ mustache "view/Thread.mustache" (mkStrContext context)
   where
     context "res" = MuList $ map (mkStrContext . resContext) resses
@@ -55,13 +55,13 @@ boardHTML host path threads
   where
     context "thread" = MuList $ map (mkStrContext . threadContext) threads
     context _         = errorRef
-    threadContext (time, _, _) "threadURL"
+    threadContext (Thread time _ _) "threadURL"
         = MuVariable $ "/thread/" <> host <> "/" <> path <> "/" <> textShow time
-    threadContext (_, name, _) "threadName"
+    threadContext (Thread _ name _) "threadName"
         = MuVariable name
-    threadContext (_, _, resCount) "threadResCound"
+    threadContext (Thread _ _ resCount) "threadResCound"
         = MuVariable $ textShow resCount
-    threadContext (time, _, _) "threadCreated"
+    threadContext (Thread time _ _) "threadCreated"
         = MuVariable $ timeFormat $ epochToUTC time
     threadContext _ _
         = errorRef
@@ -72,16 +72,16 @@ boardListHTML groups
   where
     context "boardGroup" = MuList $ map (mkStrContext . groupContext) groups
     context _            = errorRef
-    groupContext group "groupName"
-        = MuVariable $ fst group
-    groupContext group "boards"
-        = MuList $ map (mkStrContext . boardContext) $ snd group
+    groupContext (BoardGroup groupName _) "groupName"
+        = MuVariable groupName
+    groupContext (BoardGroup _ boards) "boards"
+        = MuList $ map (mkStrContext . boardContext) boards
     groupContext _     _
         = errorRef
-    boardContext board "boardName"
-        = MuVariable $ fst board
-    boardContext board "boardURL"
-        = MuVariable $ "/board/" <> TL.drop 7 (snd board)
+    boardContext (Board name _) "boardName"
+        = MuVariable name
+    boardContext (Board _ url) "boardURL"
+        = MuVariable $ "/board/" <> TL.drop 7 url
     boardContext _     _
         = errorRef
 

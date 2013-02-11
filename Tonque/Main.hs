@@ -19,5 +19,5 @@ main = do
       threads <- liftIO $ getBoard host path
       body =<< boardHTML host path threads
     get "/thread/:host/:path/:key" $ \ host path key -> do
-      (ids, resses) <- liftIO $ getThread host path key
-      body =<< threadHTML ids resses
+      resList <- liftIO $ getThread host path key
+      body =<< threadHTML resList

@@ -35,4 +35,4 @@ threadParser = do
     let (name, numStr) = TL.breakOnEnd " " $ TL.fromStrict rest
         num = TL.init $ TL.tail numStr
     many (satisfy $ not . isDigit)
-    return (read time, TL.strip name, read $ TL.unpack num)
+    return $ Thread (read time) (TL.strip name) (read $ TL.unpack num)

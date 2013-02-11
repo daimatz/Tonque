@@ -36,7 +36,7 @@ groupParser = do
     string "<B>"
     name <- (:) <$> anyChar <*> manyTill anyChar (try $ string "</B>】")
     boards <- manyTill boardParser $ try (string "【" <|> string "更新日")
-    return (TL.pack name, boards)
+    return $ BoardGroup (TL.pack name) boards
 
 boardParser :: Parser Board
 boardParser = do
@@ -48,4 +48,4 @@ boardParser = do
          <$> anyChar
          <*> manyTill anyChar (try $ string "</A>")
     manyTill anyChar $ char '/'
-    return (TL.pack name, TL.pack $ fst $ break (== ' ') url)
+    return $ Board (TL.pack name) (TL.pack $ fst $ break (== ' ') url)
