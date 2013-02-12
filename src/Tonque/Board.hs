@@ -1,5 +1,6 @@
 module Tonque.Board
     ( getBoard
+    , threadId
     )
     where
 
@@ -19,20 +20,30 @@ boardPath = "/subject.txt"
 getBoard :: Text -> Text -> IO [Thread]
 getBoard host path = do
     board <- request $ "http://" <> host <> "/" <> path <> boardPath
-    case parse boardParser board of
+    case parse (boardParser host path) board of
       Fail _ s t -> error $ show s ++ t
       Done _ r   -> return r
 
-boardParser :: Parser [Thread]
-boardParser = do
-    many threadParser
+boardParser :: Text -> Text -> Parser [Thread]
+boardParser host path = do
+    many $ threadParser host path
 
-threadParser :: Parser Thread
-threadParser = do
+threadParser :: Text -> Text -> Parser Thread
+threadParser host path = do
     time <- many digit
     string ".dat<>"
     rest <- takeTill (flip elem "\r\n")
     let (name, numStr) = TL.breakOnEnd " " $ TL.fromStrict rest
         num = TL.init $ TL.tail numStr
     many (satisfy $ not . isDigit)
-    return $ Thread (read time) (TL.strip name) (read $ TL.unpack num)
+    return $ Thread
+        { threadIdentifier  = threadId host path (TL.pack time)
+        , threadTime        = read time
+        , threadTitle       = TL.strip name
+        , threadResCount    = read $ TL.unpack num
+        , threadAlreadyRead = 0
+        , threadIsFav       = False
+        }
+
+threadId :: Text -> Text -> Text -> Text
+threadId host path key = host <> "/" <> path <> "/" <> key

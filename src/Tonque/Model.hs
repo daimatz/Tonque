@@ -29,9 +29,14 @@ BoardCache
     url    Text
   deriving Show Read Eq Ord
 
-FavThread
+ThreadCache
     identifier  Text
-    alreadyRead Int
+    time        EpochTime
+    title       Text
+    resCount    Int  Update
+    alreadyRead Int  Update
+    isFav       Bool Update
+    UniqueThreadCache identifier
   deriving Show Read Eq Ord
 |]
 
@@ -44,8 +49,28 @@ instance Cacheable Board BoardCache where
 
 instance Cacheable BoardGroup BoardGroupCache where
     toCache group = BoardGroupCache
-                        (boardGroupName group)
-                        (map toCache $ boardGroupBoards group)
+        { boardGroupCacheName   = boardGroupName group
+        , boardGroupCacheBoards = toCache $ boardGroupBoards group
+        }
     fromCache group = BoardGroup
-                        (boardGroupCacheName group)
-                        (map fromCache $ boardGroupCacheBoards group)
+        { boardGroupName   = boardGroupCacheName group
+        , boardGroupBoards = fromCache $ boardGroupCacheBoards group
+        }
+
+instance Cacheable Thread ThreadCache where
+    toCache thread = ThreadCache
+        { threadCacheIdentifier  = threadIdentifier thread
+        , threadCacheTime        = threadTime thread
+        , threadCacheTitle       = threadTitle thread
+        , threadCacheResCount    = threadResCount thread
+        , threadCacheAlreadyRead = threadAlreadyRead thread
+        , threadCacheIsFav       = threadIsFav thread
+        }
+    fromCache thread = Thread
+        { threadIdentifier  = threadCacheIdentifier thread
+        , threadTime        = threadCacheTime thread
+        , threadTitle       = threadCacheTitle thread
+        , threadResCount    = threadCacheResCount thread
+        , threadAlreadyRead = threadCacheAlreadyRead thread
+        , threadIsFav       = threadCacheIsFav thread
+        }

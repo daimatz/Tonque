@@ -30,9 +30,12 @@ data BoardGroup = BoardGroup
   deriving (Show, Read, Eq, Ord)
 
 data Thread = Thread
-    { threadTime     :: EpochTime
-    , threadName     :: Text
-    , threadResCount :: Int
+    { threadIdentifier  :: Text
+    , threadTime        :: EpochTime
+    , threadTitle       :: Text
+    , threadResCount    :: Int
+    , threadAlreadyRead :: Int
+    , threadIsFav       :: Bool
     }
   deriving (Show, Read, Eq, Ord)
 

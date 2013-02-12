@@ -13,7 +13,7 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 executable Tonque
-  main-is:           Tonque/Main.hs
+  main-is:           Main.hs
   hs-source-dirs:    src
   -- other-modules:
   ghc-options:       -Wall

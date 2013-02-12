@@ -48,18 +48,33 @@ updateBoardGroupCaches boards = do
     _ <- runSql $ forM boards $ \board -> insert board
     return ()
 
-searchFavThread :: Text -> IO Bool
-searchFavThread identifier = do
-    lst <- map entityVal <$>
-        (runSql $ selectList [FavThreadIdentifier ==. identifier] [])
-    return $ lst /= []
+readThreadCaches :: IO [ThreadCache]
+readThreadCaches
+    = map entityVal <$> (runSql $ selectList [] [Asc ThreadCacheId])
 
-addFavThread :: FavThread -> IO ()
-addFavThread thread = do
+readThreadCache :: Text -> IO (Maybe ThreadCache)
+readThreadCache identifier = do
+    entity <- runSql $ selectFirst [ThreadCacheIdentifier ==. identifier] []
+    return $ entityVal <$> entity
+
+addThreadCache :: ThreadCache -> IO ()
+addThreadCache thread = do
     runSql $ insert thread
     return ()
 
-removeFavThread :: Text -> IO ()
-removeFavThread identifier = do
-    runSql $ deleteWhere [FavThreadIdentifier ==. identifier]
+updateThreadCache :: ThreadCache -> IO ()
+updateThreadCache thread = runSql
+    $ updateWhere [ThreadCacheIdentifier ==. threadCacheIdentifier thread]
+        [ ThreadCacheResCount    =. threadCacheResCount thread
+        , ThreadCacheAlreadyRead =. threadCacheAlreadyRead thread
+        , ThreadCacheIsFav       =. threadCacheIsFav thread
+        ]
+
+removeThreadCache :: Text -> IO ()
+removeThreadCache identifier = do
+    runSql $ deleteWhere [ThreadCacheIdentifier ==. identifier]
     return ()
+
+readFavThreads :: IO [ThreadCache]
+readFavThreads
+    = map entityVal <$> (runSql $ selectList [ThreadCacheIsFav ==. True] [Asc ThreadCacheId])

@@ -24,13 +24,10 @@ getThread host path key = do
 
 -- | parse line and return Res.
 --  when failed to parse, then returns Error value.
---
--- >>> parseLine (1, "a<><>2013/02/08(金) 16:02:11.12 ID:9oSML5U3<>hoge<>")
--- Res 1 "a" (read "2013-02-08 16:02:11.12") "9oSML5U3" "hoge"
 parseLine :: (Int, Text) -> Res
 parseLine (n, line)
     = case TL.splitOn delim line of
-        [name, mail, date_id, title, body] ->
+        [name, mail, date_id, body, title] ->
           let (date_idstr, id_) = TL.breakOnEnd idstr date_id
               date = maybe date_idstr id $ TL.stripSuffix idstr date_idstr
           in Res
@@ -39,8 +36,8 @@ parseLine (n, line)
             , resMail   = mail
             , resDate   = date
             , resId     = id_
-            , resTitle  = guard (body /= "") >> Just title
-            , resBody   = if body /= "" then body else title
+            , resTitle  = guard (title /= "") >> Just title
+            , resBody   = body
             }
         _ -> Res n "error" "" "error" "error" (Just "error") "error"
   where
@@ -48,12 +45,6 @@ parseLine (n, line)
     idstr = " ID:"
 
 -- | count id appearance times
---
--- >>> resIds [ Res 1 "" "" "" "a" ""
---            , Res 2 "" "" "" "a" ""
---            , Res 3 "" "" "" "b" ""
---            ]
--- Map.fromList [("a", 2), ("b", 1)]
 resIds :: [Res] -> Map Text Int
 resIds ressess
     = let ids = [ resId v | v <- ressess ]

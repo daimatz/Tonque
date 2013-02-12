@@ -1,11 +1,12 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Tonque.HTML
-    ( threadHTML
-    , boardGroupsHTML
+    ( boardGroupsHTML
     , boardHTML
     , body
-    ) where
+    , threadHTML
+    )
+    where
 
 import           Control.Monad.IO.Class  (MonadIO, liftIO)
 import           Data.Map                ((!))
@@ -40,10 +41,8 @@ threadHTML faved (ResList ids resses)
     = liftIO $ mustache "view/Thread.mustache" (mkStrContext context)
   where
     context "res"     = MuList $ map (mkStrContext . resContext) resses
-    context "favUrl"  = MuVariable $
-        if faved then "unfav" else "fav/" <> textShow (length resses)
-    context "favText" = MuVariable $
-        if faved then "unfav" else ("fav" :: Text)
+    context "favUrl"  = MuVariable $ if faved then "unfav" else ("fav" :: Text)
+    context "favText" = MuVariable $ if faved then "unfav" else ("fav" :: Text)
     context _         = errorRef
     resContext res "resNumber"  = MuVariable $ textShow (resNumber res)
     resContext res "resName"    = MuVariable $ resName res
@@ -57,16 +56,16 @@ boardHTML :: [Thread] -> ActionM Text
 boardHTML threads
     = liftIO $ mustache "view/Board.mustache" (mkStrContext context)
   where
-    context "thread" = MuList $ map (mkStrContext . threadContext) threads
+    context "threads" = MuList $ map (mkStrContext . threadContext) threads
     context _         = errorRef
-    threadContext (Thread time _ _) "threadUrl"
-        = MuVariable $ textShow time <> "/index"
-    threadContext (Thread _ name _) "threadName"
-        = MuVariable name
-    threadContext (Thread _ _ resCount) "threadResCount"
-        = MuVariable $ textShow resCount
-    threadContext (Thread time _ _) "threadCreated"
-        = MuVariable $ timeFormat $ epochToUTC time
+    threadContext thread "threadUrl"
+        = MuVariable $ "/board/" <> threadIdentifier thread <> "/index"
+    threadContext thread "threadTitle"
+        = MuVariable $ threadTitle thread
+    threadContext thread "threadResCount"
+        = MuVariable $ textShow $ threadResCount thread
+    threadContext thread "threadCreated"
+        = MuVariable $ timeFormat $ epochToUTC $ threadTime thread
     threadContext _ _
         = errorRef
 

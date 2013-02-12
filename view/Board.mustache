@@ -1,10 +1,10 @@
 <ul class="board">
-{{#thread}}
-  <li class="threadUrl"><a href="{{threadUrl}}">{{threadName}}</a>
+{{#threads}}
+  <li class="threadUrl"><a href="{{threadUrl}}">{{threadTitle}}</a>
     <ul class="threadContent">
       <li class="threadResCount">{{threadResCount}}</li>
       <li class="threadCreated">{{threadCreated}}</li>
     </ul>
   </li>
-{{/thread}}
+{{/threads}}
 </ul>
