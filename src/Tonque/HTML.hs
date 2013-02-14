@@ -63,7 +63,9 @@ boardHTML threads
     threadContext thread "threadTitle"
         = MuVariable $ threadTitle thread
     threadContext thread "threadResCount"
-        = MuVariable $ textShow $ threadResCount thread
+        = MuVariable $  textShow (threadAlreadyRead thread)
+                     <> " / "
+                     <>  textShow (threadResCount thread)
     threadContext thread "threadCreated"
         = MuVariable $ timeFormat $ epochToUTC $ threadTime thread
     threadContext _ _

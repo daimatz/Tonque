@@ -50,8 +50,9 @@ data Res = Res
     }
   deriving (Show, Read, Eq, Ord)
 
+type ResIds = Map Text Int
 data ResList = ResList
-    { resIds        :: Map Text Int
+    { resListResIds :: ResIds
     , resListResses :: [Res]
     }
   deriving (Show, Read, Eq, Ord)

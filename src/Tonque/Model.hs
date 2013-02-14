@@ -38,10 +38,17 @@ ThreadCache
     isFav       Bool Update
     UniqueThreadCache identifier
   deriving Show Read Eq Ord
+
+ResListCache
+    resIds     ResIds
+    resses     [Res]
+  deriving Show Read Eq Ord
 |]
 
 derivePersistField "Text"
 derivePersistField "EpochTime"
+derivePersistField "ResIds"
+derivePersistField "Res"
 
 instance Cacheable Board BoardCache where
     toCache board = BoardCache (boardName board) (boardUrl board)
@@ -73,4 +80,14 @@ instance Cacheable Thread ThreadCache where
         , threadResCount    = threadCacheResCount thread
         , threadAlreadyRead = threadCacheAlreadyRead thread
         , threadIsFav       = threadCacheIsFav thread
+        }
+
+instance Cacheable ResList ResListCache where
+    toCache resList = ResListCache
+        { resListCacheResIds = resListResIds resList
+        , resListCacheResses = resListResses resList
+        }
+    fromCache resList = ResList
+        { resListResIds = resListCacheResIds resList
+        , resListResses = resListCacheResses resList
         }

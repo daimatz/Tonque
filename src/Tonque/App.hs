@@ -3,10 +3,12 @@ module Tonque.App
     )
     where
 
-import           Control.Monad.IO.Class      (liftIO)
-import           Data.Monoid                 ((<>))
-import qualified Data.Text.Lazy              as TL
-import           Web.Scotty                  hiding (body)
+import           Control.Applicative    ((<$>))
+import           Control.Monad          (forM, forM_)
+import           Control.Monad.IO.Class (liftIO)
+import           Data.Monoid            ((<>))
+import qualified Data.Text.Lazy         as TL
+import           Web.Scotty             hiding (body)
 
 import           Tonque.Board
 import           Tonque.BoardGroups
@@ -24,8 +26,13 @@ app = do
         body =<< boardGroupsHTML groups
 
     get "/favThreads" $ do
-        threads <- liftIO readFavThreads
-        body =<< boardHTML (fromCache threads)
+        threads <- fromCache <$> liftIO readFavThreads
+        resses <- forM threads $ \thread -> liftIO
+            $ getThreadByIdentifier (threadIdentifier thread)
+        let pairs = zip threads (map (length . resListResses) resses)
+        forM_ pairs $ \ (th, num) -> liftIO
+            $ updateThreadCache $ toCache $ th { threadResCount = num }
+        body =<< boardHTML threads
 
     get "/updateBoardGroups" $ do
         liftIO updateBoardGroups
@@ -51,7 +58,8 @@ app = do
               return False
           Just thread -> do
               updateThreadCache $ thread
-                { threadCacheAlreadyRead = length resses
+                { threadCacheResCount    = length resses
+                , threadCacheAlreadyRead = length resses
                 }
               return $ threadCacheIsFav thread
         body =<< threadHTML isFav resList
