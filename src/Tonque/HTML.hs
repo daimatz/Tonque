@@ -20,7 +20,7 @@ import           Text.Hastache.Context
 import           Web.Scotty              (ActionM, html)
 
 import           Tonque.Type
-import           Tonque.Util
+import           Tonque.Util             (epochToUTC, textShow, timeFormat)
 
 mustache :: MonadIO m => FilePath -> MuContext m -> m Text
 mustache path context = return . decodeUtf8

@@ -12,7 +12,7 @@ import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 
 import           Tonque.Type
-import           Tonque.Util
+import           Tonque.Util    (request)
 
 getThread :: Text -> Text -> Text -> IO ResList
 getThread host path key = do

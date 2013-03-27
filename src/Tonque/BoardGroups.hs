@@ -9,9 +9,10 @@ import           Data.Attoparsec.Text.Lazy
 import           Data.Text.Lazy            (Text)
 import qualified Data.Text.Lazy            as TL
 
-import           Tonque.DBUtil
+import           Tonque.DBUtil             (readBoardGroupCaches,
+                                            updateBoardGroupCaches)
 import           Tonque.Type
-import           Tonque.Util
+import           Tonque.Util               (request)
 
 boardGroupsUrl :: Text
 boardGroupsUrl = "http://menu.2ch.net/bbstable.html"
